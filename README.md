@@ -85,3 +85,17 @@ Event Storming 결과 : https://www.msaez.io/#/storming/Qjy9fDJTqoQmlkaS7SAQzrJd
 
 # 구현
 
+분석/설계단계에서 도출된 헥사고날 아키텍처에 따라, 각 BC별로 대변되는 마이크로서비스들을 스프링부트로 구현한다.
+
+모든 시스템은 spring-boot로 구현하였고 mvn spring-boot:run 명령어로 실행한다.
+
+
+
+# DDD 적용
+
+각 서비스내에 도출된 핵심 Aggregate Root 객체를 Entity로 선언하고, 가능한 이해하기 쉬운 영어단어를 사용하였다.
+
+CALL.java
+
+![CALL](https://user-images.githubusercontent.com/90515096/135389764-2cb7a251-b297-418a-aadf-e5df999a33f2.png)
+
