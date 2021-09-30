@@ -209,9 +209,7 @@ Taxi.java
 
 - 결제서비스를 호출하기 위하여 FeignClient를 이용하여 Service대행 인터페이스 구현
 
-  ![reqres1](https://user-images.githubusercontent.com/90515096/135407394-808db3d7-18dc-4c27-8ccd-52566e660538.png)
-
-  
+  ![reqres0](https://user-images.githubusercontent.com/90515096/135479919-9b194913-7525-466b-9974-19d9809969b4.png)
 
 - 서비스종료 직후 결제를 요청
 
@@ -267,7 +265,7 @@ Taxi.java
 
   
 
-  # API Gateway
+  # Gateway
 
   - Local테스트 환경에서는 localhost:8088에서 Gateway API 작동
 
@@ -289,10 +287,54 @@ Taxi.java
 
 
 
-#   CI / CD 설정
+# CI / CD 설정
 
-- kafka를 이용하여 택시호출(CALL)에서 택시(Taxi)로의 연동을비동기식으로 구현
+- kafka를 이용하여 택시호출(CALL)에서 택시(Taxi)로의 연동을 비동기식으로 구현
 - 
+
+# 서킷브레이킹
+
+- 서킷 브레이킹 프레임워크의 선택: Spring FeignClient + Hystrix 옵션을 사용하여 구현함
+- 시나리오는 택시(Taxi)-->결제(payment) 호출 시의 연결을 RESTful Request/Response 로 연동하여 구현이 되어있고, 결제 요청이 과도할 경우 CB 를 통하여 장애격리
+
+- Hystrix 를 설정: 요청처리 쓰레드에서 처리시간이 610 밀리가 넘어서기 시작하여 어느정도 유지되면 CB 회로가 닫히도록 (요청을 빠르게 실패처리, 차단) 설정
+
+- application.yml
+
+  ![서킷브레이커2](https://user-images.githubusercontent.com/90515096/135510972-8c8c21da-7b70-47c7-b48d-85d1d0dd1fa1.png)
+
+Hystrix 를 설정: 요청처리 쓰레드에서 처리시간이 610 밀리가 넘어서기 시작하여 어느정도 유지되면 CB 회로가 닫히도록 (요청을 빠르게 실패처리, 차단) 설정
+
+![서킷브레이커3](https://user-images.githubusercontent.com/90515096/135511277-ed36a66b-7650-4602-994b-4d839c683f2a.png)
+
+- 부하테스터 siege 툴을 통한 서킷 브레이커 동작 확인: siege -v -c200 -t20s --content-type "application/json" 'http://localhost:8082/taxis POST {"memberId":"1", "callStatus":"택시호출"}'
+
+- 동시사용자 200명
+- 20초 동안 실시
+
+![서킷브레이커0](https://user-images.githubusercontent.com/90515096/135511530-5780facf-9f1e-4d46-8c65-862553ca1c08.png)
+
+
+
+Taxi서비스의 로그를 확인하여 Circuit이 Open된 것을 확인함.
+
+![서킷브레이커1](https://user-images.githubusercontent.com/90515096/135511474-f3934a4b-991c-45b5-afc0-8654764d561b.png)
+
+
+
+# 오토스케일 아웃
+
+- 
+
+
+
+
+
+# 무정지 재배포
+
+- 
+
+
 
 
 
