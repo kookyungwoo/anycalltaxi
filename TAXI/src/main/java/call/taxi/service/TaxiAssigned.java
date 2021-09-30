@@ -5,6 +5,15 @@ public class TaxiAssigned extends AbstractEvent {
     private Integer callId;
     private String taxiNumber;
     private String taxiInfo;
+    private String phoneNumber;
+
+    public String getPhoneNumber() {
+        return phoneNumber;
+    }
+
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
+    }
 
     public TaxiAssigned(){
         super();
