@@ -1,0 +1,98 @@
+server:
+  port: 8088
+
+---
+
+spring:
+  profiles: default
+  cloud:
+    gateway:
+      routes:
+        - id: CALL
+          uri: http://localhost:8081
+          predicates:
+            - Path=/calls/** 
+        - id: TAXI
+          uri: http://localhost:8082
+          predicates:
+            - Path=/taxis/** 
+        - id: NOTIFY
+          uri: http://localhost:8083
+          predicates:
+            - Path=/notifies/** 
+        - id: SMS
+          uri: http://localhost:8084
+          predicates:
+            - Path= 
+        - id: PAYMENT
+          uri: http://localhost:8085
+          predicates:
+            - Path=/payments/** 
+        - id: MEMBERSHIP
+          uri: http://localhost:8086
+          predicates:
+            - Path=/memberShips/** 
+        - id: TAXISERVICEVIWER
+          uri: http://localhost:8087
+          predicates:
+            - Path= /taxiServiceInfos/**
+      globalcors:
+        corsConfigurations:
+          '[/**]':
+            allowedOrigins:
+              - "*"
+            allowedMethods:
+              - "*"
+            allowedHeaders:
+              - "*"
+            allowCredentials: true
+
+
+---
+
+spring:
+  profiles: docker
+  cloud:
+    gateway:
+      routes:
+        - id: CALL
+          uri: http://CALL:8080
+          predicates:
+            - Path=/calls/** 
+        - id: TAXI
+          uri: http://TAXI:8080
+          predicates:
+            - Path=/taxis/** 
+        - id: NOTIFY
+          uri: http://NOTIFY:8080
+          predicates:
+            - Path=/notifies/** 
+        - id: SMS
+          uri: http://SMS:8080
+          predicates:
+            - Path= 
+        - id: PAYMENT
+          uri: http://PAYMENT:8080
+          predicates:
+            - Path=/payments/** 
+        - id: MEMBERSHIP
+          uri: http://MEMBERSHIP:8080
+          predicates:
+            - Path=/memberShips/** 
+        - id: TAXISERVICEVIWER
+          uri: http://TAXISERVICEVIWER:8080
+          predicates:
+            - Path= /taxiServiceInfos/**
+      globalcors:
+        corsConfigurations:
+          '[/**]':
+            allowedOrigins:
+              - "*"
+            allowedMethods:
+              - "*"
+            allowedHeaders:
+              - "*"
+            allowCredentials: true
+
+server:
+  port: 8080
