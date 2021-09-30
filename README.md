@@ -174,9 +174,32 @@ Taxi.java
 # Correlation
 
 - 호출후 호출을 취소시 CALL, Taxi의 상태를 확인한다.
-- CALL의 데이터목록 캡처
-- Taxi의 데이터목록 캡처
-- 
+
+- 택시호출
+
+- http POST http://localhost:8081/calls memberId=1 phoneNumber="010-7202-2664" startAddress="경기도 분당구 정자동" endAddress="서울시 양천구 목동서로 400" callStatus="택시호출"
+
+- CALL서비스 확인 : http get http://localhost:8081/calls/1
+
+  ![corell1](https://user-images.githubusercontent.com/90515096/135405464-afd2f765-70f1-42e9-9cf9-0b800e4655a5.png)
+
+- Taxi서비스 확인 : http get http://localhost:8082/taxis/1
+
+  ![corell2](https://user-images.githubusercontent.com/90515096/135405720-e83735b1-4473-407c-a98f-8bd0067f2c64.png)
+
+  
+
+- 택시호출 취소 : http PATCH http://localhost:8081/calls/1 callStatus="호출취소"
+
+- CALL서비스 확인 : http get http://localhost:8081/calls/1
+
+  ![corell3](https://user-images.githubusercontent.com/90515096/135406274-586f5cda-ddb5-4c25-9c5f-25963e4532e5.png)
+
+- Taxi서비스 확인 : http get http://localhost:8082/taxis/1
+
+![corell4](https://user-images.githubusercontent.com/90515096/135406434-f328c50f-db0d-4d1b-a8f7-fdb9fb0117c1.png)
+
+
 
 
 
