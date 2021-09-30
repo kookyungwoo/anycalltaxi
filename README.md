@@ -249,19 +249,21 @@ Taxi.java
 
   http POST http://localhost:8081/calls memberId=1 phoneNumber="010-7202-2664" startAddress="경기도 분당구 정자동" endAddress="서울시 양천구 목동서로 400" callStatus="택시호출"
 
-  -> 호출처리결과 캡쳐
+  ![corell1](https://user-images.githubusercontent.com/90515096/135405464-afd2f765-70f1-42e9-9cf9-0b800e4655a5.png)
 
   #Success
 
-  #호출상태확인
-
-  -> 호출상태 확인캡쳐
+  #호출상태확인 : 택시호출
 
   #CALL서비스 가동
 
-  #호출상태확인
+  #Taxi 배정처리
 
-  -> 호출상태 확인캡쳐
+  http PATCH http://localhost:8082/taxis/1 taxiNumber="114너7484" taxiInfo="서울택시(주) 기사명 : 홍길동 종류 : 일반택시" callStatus="배정됨" taxiStatus="배정됨"
+
+  #상태확인
+
+  ![비동기3](https://user-images.githubusercontent.com/90515096/135430227-d5269352-4ab5-461f-8ada-5c514f3c0972.png)
 
   
 
@@ -271,19 +273,19 @@ Taxi.java
 
   - application.yml 파일에 프로파일 별로 Gateway 설정
 
-    - 설정부분 화면캡쳐
+    ![gateway1](https://user-images.githubusercontent.com/90515096/135430576-4d7237cc-bb14-4820-b541-2cf529963406.png)
 
   - GateWay서비스 기동후, Gateway서비스의 port 8088로 CALL,Taxi,Notify 서비스가 접속 가능한지 확인
 
-    http get http://localhost:8088/calls
+    http get http://localhost:8088/calls/1
 
-    - 캡쳐
+    ![gateway2](https://user-images.githubusercontent.com/90515096/135430878-56547ebf-47be-40d6-91a4-be17c1117f24.png)
 
-      
+    
 
-​              http get http://localhost:8088/taxies
+​              http get http://localhost:8088/taxis/1
 
-캡처
+​              ![gateway3](https://user-images.githubusercontent.com/90515096/135431222-5ea133e3-2965-495f-a730-eca9687e57a1.png)
 
 
 
