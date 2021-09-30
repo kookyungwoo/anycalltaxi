@@ -92,5 +92,4 @@
 
 
 
-![](C:\MSA\개인평가준비\CallTaxiService_modeling_20210926.png)
-
+![CallTaxiService_modeling_20210926](https://user-images.githubusercontent.com/90515096/135374296-6d20f5de-b47c-407e-898c-85e3a2c46302.png)
