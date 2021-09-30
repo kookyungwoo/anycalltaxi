@@ -209,25 +209,37 @@ Taxi.java
 
 - 결제서비스를 호출하기 위하여 FeignClient를 이용하여 Service대행 인터페이스 구현
 
-- service대행 인터페이스 소스 캡쳐
+  ![reqres1](https://user-images.githubusercontent.com/90515096/135407394-808db3d7-18dc-4c27-8ccd-52566e660538.png)
+
+  
 
 - 서비스종료 직후 결제를 요청
 
-- 요청하는 부분 소스캡쳐
+  ![reqres2](https://user-images.githubusercontent.com/90515096/135412995-d7a042fb-a439-454f-b8b0-9f0ad9045089.png)
+
+  
 
 - 동기호출에서는 결제시스템이 장애가 나면 주문을 받지 못함을 확인.
 
-- 에러발생 화면 캡쳐
+  ![reqres3](https://user-images.githubusercontent.com/90515096/135415178-aceb60ad-f9e3-4783-8c45-ce91fce62859.png)
 
   
 
 # 비동기식 호출
 
-- kafka를 이용하여 택시호출(CALL)에서 택시(Taxi)로의 연동을비동기식으로 구현
+- kafka를 이용하여 택시호출(CALL)에서 택시(Taxi)로의 연동을 비동기식으로 구현
+
 - CALL은 호출이 들어오면 카프카로 호출이 들어왔음을 알린다
-- CALL에서 publish하는 부분 소스 캡쳐
+
+  ![비동기1](https://user-images.githubusercontent.com/90515096/135415567-93ec335e-2a74-4abb-aaab-36d21a12a5ab.png)
+
+  
+
 - Taxi는 호출 이벤트에 대해서 수신하여 처리하도록 PolicyHandler를 구현
-- PolicyHandler 소스 캡쳐
+
+  ![비동기2](https://user-images.githubusercontent.com/90515096/135415842-1c197084-db1a-48c6-9f65-3b8b15ec255c.png)
+
+  
 
 - Taxi는 CALL과 분리되어 있으며, 이벤트 수신에 따라 처리되기 때문에, Taxi가 유지보수로 인해 잠시 내려간 상태라도 호출을 받는데 문제가 없다.
 
