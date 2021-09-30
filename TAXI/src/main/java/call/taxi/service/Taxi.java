@@ -3,6 +3,9 @@ package call.taxi.service;
 import javax.persistence.*;
 import org.springframework.beans.BeanUtils;
 
+import call.taxi.service.external.Payment;
+
+import java.util.Optional;
 
 @Entity
 @Table(name="Taxi_table")
@@ -31,7 +34,7 @@ public class Taxi {
         BeanUtils.copyProperties(this, taxiCallReceived);
         taxiCallReceived.publishAfterCommit();
 
-        TaxiAssigned taxiAssigned = new TaxiAssigned();
+        /*TaxiAssigned taxiAssigned = new TaxiAssigned();
         BeanUtils.copyProperties(this, taxiAssigned);
         taxiAssigned.publishAfterCommit();
 
@@ -41,7 +44,7 @@ public class Taxi {
 
         TaxiServiceEnded taxiServiceEnded = new TaxiServiceEnded();
         BeanUtils.copyProperties(this, taxiServiceEnded);
-        taxiServiceEnded.publishAfterCommit();
+        taxiServiceEnded.publishAfterCommit();*/
 
         //Following code causes dependency to external APIs
         // it is NOT A GOOD PRACTICE. instead, Event-Policy mapping is recommended.
@@ -51,6 +54,49 @@ public class Taxi {
         //Application.applicationContext.getBean(call.taxi.service.external.PaymentService.class).pay(payment);
 
     }
+
+
+    @PostUpdate
+    private void onPostUpdate(){
+        if( "배정됨".equals(this.getTaxiStatus())){
+            TaxiRepository taxiRepository = TaxiApplication.applicationContext.getBean(TaxiRepository.class);
+            Optional<Taxi> orderOptional = taxiRepository.findById(this.getCallId());
+            Taxi taxi = orderOptional.get();
+            //kafka에 발송하는 함수 호출
+            TaxiAssigned taxiAssigned = new TaxiAssigned();
+            BeanUtils.copyProperties(taxi, taxiAssigned);
+            taxiAssigned.publishAfterCommit();
+        }else if( "운행시작".equals(this.getTaxiStatus())){
+            TaxiRepository taxiRepository = TaxiApplication.applicationContext.getBean(TaxiRepository.class);
+            Optional<Taxi> orderOptional = taxiRepository.findById(this.getCallId());
+            Taxi taxi = orderOptional.get();
+            //kafka에 발송하는 함수 호출
+            TaxiServiceStarted taxiServiceStarted = new TaxiServiceStarted();
+            BeanUtils.copyProperties(taxi, taxiServiceStarted);
+            taxiServiceStarted.publishAfterCommit();
+        }else if( "운행종료".equals(this.getTaxiStatus())){
+            Payment pay = new Payment();
+
+            pay.setCallId(Integer.parseInt(String.valueOf(getCallId())));
+            pay.setPayDate("2021-10-01");
+            pay.setCreditCardNumber(getCreditCardNumber());
+            pay.setPhoneNumber(getPhoneNumber());
+            pay.setPayAmt(getPayAmt());
+            pay.setPayStatus("결제요청");
+            //Req/Res 동기호출
+            TaxiApplication.applicationContext.getBean(call.taxi.service.external.PaymentService.class).pay(pay);
+
+            TaxiRepository taxiRepository = TaxiApplication.applicationContext.getBean(TaxiRepository.class);
+            Optional<Taxi> orderOptional = taxiRepository.findById(this.getCallId());
+            Taxi taxi = orderOptional.get();
+            //kafka에 발송하는 함수 호출
+            TaxiServiceEnded taxiServiceEnded = new TaxiServiceEnded();
+            BeanUtils.copyProperties(taxi, taxiServiceEnded);
+            taxiServiceEnded.publishAfterCommit();
+        }
+    }
+
+
 
     public Long getCallId() {
         return callId;
