@@ -289,8 +289,11 @@ Taxi.java
 
 # CI / CD 설정
 
-- kafka를 이용하여 택시호출(CALL)에서 택시(Taxi)로의 연동을 비동기식으로 구현
-- 
+- 구현체들은 하나의 source repository 에 구성되었고, 사용한 CI/CD 플랫폼은 AWS를 사용하였으며, pipeline build script는 각 프로젝트 폴더 아래에 buildspec.yml 에 포함되었다.
+
+  ![CICD](https://user-images.githubusercontent.com/90515096/135526700-05972899-a86a-465f-9a1a-8e818f8a9ef3.png)
+
+
 
 # 서킷브레이킹
 
@@ -324,17 +327,40 @@ Taxi서비스의 로그를 확인하여 Circuit이 Open된 것을 확인함.
 
 # 오토스케일 아웃
 
-- 
+- 결제서비스에 대한 replica 를 동적으로 늘려주도록 HPA 를 설정한다. 설정은 CPU 사용량이 15프로를 넘어서면 replica 를 10개까지 늘려준다
+- Kubectl autoscale deploy payment --min=1 --max=10 --cpu-percent=15
+- Siege를 이용하여 부하를 걸어주고 모니터링을 한다.
+- Kubectl get deploy payment -w
+- 시간이 지난 후 스케일 아웃이 벌어진걸 확인
 
+![스케일아웃1](https://user-images.githubusercontent.com/90515096/135528308-05d0e44e-2ecb-4740-9e81-3faf138da8c3.png)
 
+siege로그로 성공률이 높아진걸 확인
+
+![스케일아웃2](https://user-images.githubusercontent.com/90515096/135528414-3f754561-5ff6-4830-9eba-6ed10cc43c7d.png)
 
 
 
 # 무정지 재배포
 
-- 
+- Seige로 배포작업 모니터링
 
+- siege -c100 -t120s -r10 --content-type "application/json" 'http://localhost:8082/taxis POST {"memberId":"1", "callStatus":"택시호출"}'
 
+- 새버전 배포 시작후 siege확인
+
+- Transactions :      2704 hits
+
+- Availability :           73.96%
+
+- 배포중 성공률이 떨어지는걸 확인. deployment.yml에 readiness probe 설정
+
+  ![무정지](https://user-images.githubusercontent.com/90515096/135527799-4006834d-7a74-49b0-b275-c67fcda8312c.png)
+
+설정후 배포값
+
+- Transactions :      2704 hits
+- Availability :           100.00 %
 
 
 
