@@ -3,10 +3,19 @@ package call.taxi.service;
 import javax.persistence.*;
 import org.springframework.beans.BeanUtils;
 
+import java.util.Optional;
 
 @Entity
 @Table(name="MemberShip_table")
 public class MemberShip {
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
 
     @Id
     @GeneratedValue(strategy=GenerationType.AUTO)
@@ -15,6 +24,7 @@ public class MemberShip {
     private String phoneNumber;
     private String creditCardNumber;
     private String friendPhoneNumber;
+    private String status;
 
     @PostPersist
     public void onPostPersist(){
@@ -25,7 +35,25 @@ public class MemberShip {
         RequestMemberInfoArrived requestMemberInfoArrived = new RequestMemberInfoArrived();
         BeanUtils.copyProperties(this, requestMemberInfoArrived);
         requestMemberInfoArrived.publishAfterCommit();
+   }
 
+   @PostUpdate
+   private void onPostUpdate(){
+       if( "고객정보요청도착".equals(this.getStatus())){
+            System.out.println(this.getClass().getName()+" :   고객정보요청도착   #########################");
+            System.out.println(this.getClass().getName()+" :   고객정보요청도착   #########################");
+            System.out.println(this.getClass().getName()+" :   고객정보요청도착   #########################");
+            System.out.println(this.getClass().getName()+" :   고객정보요청도착   #########################");
+           
+           MemberShipRepository memberShipRepository = MembershipApplication.applicationContext.getBean(MemberShipRepository.class);
+           Optional<MemberShip> orderOptional = memberShipRepository.findById(this.getMemberId());
+           MemberShip memberShip = orderOptional.get();
+
+           //kafka에 발송하는 함수 호출
+           RequestMemberInfoArrived requestMemberInfoArrived = new RequestMemberInfoArrived();
+           BeanUtils.copyProperties(memberShip, requestMemberInfoArrived);
+           requestMemberInfoArrived.publishAfterCommit();
+       }
     }
 
     public Long getMemberId() {
