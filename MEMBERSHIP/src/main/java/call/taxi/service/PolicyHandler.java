@@ -14,16 +14,22 @@ public class PolicyHandler{
     @StreamListener(KafkaProcessor.INPUT)
     public void wheneverTaxiCallReceived_RequestMemberInfo(@Payload TaxiCallReceived taxiCallReceived){
 
+        System.out.println(this.getClass().getName()+" : wheneverTaxiCallReceived_RequestMemberInfo   -----------------start------------------");
         if(!taxiCallReceived.validate()) return;
 
         System.out.println("\n\n##### listener RequestMemberInfo : " + taxiCallReceived.toJson() + "\n\n");
 
-
+        java.util.Optional<MemberShip> optionalMemberShip = memberShipRepository.findById(taxiCallReceived.getCallId());
+        MemberShip memberShip = optionalMemberShip.get();
+        //memberShip.setEstimateScore(taxiCallReceived.getEstimateScore());
+        memberShip.setStatus("고객정보요청도착");
+        memberShipRepository.save(memberShip);
 
         // Sample Logic //
         // MemberShip memberShip = new MemberShip();
         // memberShipRepository.save(memberShip);
 
+        System.out.println(this.getClass().getName()+" : wheneverTaxiCallReceived_RequestMemberInfo   -----------------end------------------");
     }
 
 
