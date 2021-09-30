@@ -2,9 +2,7 @@ package call.taxi.service;
 
 import javax.persistence.*;
 import java.util.Optional;
-import javax.persistence.*;
 import org.springframework.beans.BeanUtils;
-
 
 @Entity
 @Table(name="Call_table")
@@ -20,51 +18,39 @@ public class Call {
     private String callStatus;
 
     @PostPersist
-    public void onPostPersist()
-    {
+    public void onPostPersist(){
         TaxiCalled taxiCalled = new TaxiCalled();
         BeanUtils.copyProperties(this, taxiCalled);
         taxiCalled.publishAfterCommit();
      }
 
     @PostUpdate
-    private void onPostUpdate()
-    {
-        if( "호출취소".equals(this.getCallStatus()))
-        {
-            
+    private void onPostUpdate(){
+        if( "호출취소".equals(this.getCallStatus())){
             CallRepository callRepository = CallApplication.applicationContext.getBean(CallRepository.class);
             Optional<Call> orderOptional = callRepository.findById(this.getCallId());
             Call call = orderOptional.get();
-
-            //kafka에 발송하는 함수 호출
+           //kafka에 발송하는 함수 호출
             TaxiCallCanceled taxiCallCanceled = new TaxiCallCanceled();
             BeanUtils.copyProperties(call, taxiCallCanceled);
             taxiCallCanceled.publishAfterCommit();
-        }
-        else if( "서비스평가".equals(this.getCallStatus()))
-        {
-
-            ServiceEstimated serviceEstimated = new ServiceEstimated();
+        }else if( "서비스평가".equals(this.getCallStatus())){
+           ServiceEstimated serviceEstimated = new ServiceEstimated();
             BeanUtils.copyProperties(this, serviceEstimated);
             serviceEstimated.publishAfterCommit();
-         
         }
     }
-
 
     public Long getCallId() {
         return callId;
     }
-
     public void setCallId(Long callId) {
         this.callId = callId;
     }
     public String getMemberId() {
         return memberId;
     }
-
-    public void setMemberId(String memberId) {
+   public void setMemberId(String memberId) {
         this.memberId = memberId;
     }
     public String getPhoneNumber() {
