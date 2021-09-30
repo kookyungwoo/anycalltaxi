@@ -16,6 +16,15 @@ public class Payment {
     private Long payAmt;
     private String phoneNumber;
     private String payStatus;
+    private String creditCardNumber;
+
+    public String getCreditCardNumber() {
+        return creditCardNumber;
+    }
+
+    public void setCreditCardNumber(String creditCardNumber) {
+        this.creditCardNumber = creditCardNumber;
+    }
 
     @PostPersist
     public void onPostPersist(){
