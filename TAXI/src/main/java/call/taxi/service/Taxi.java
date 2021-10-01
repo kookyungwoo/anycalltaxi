@@ -30,6 +30,20 @@ public class Taxi {
 
     @PostPersist
     public void onPostPersist(){
+
+
+        Payment pay = new Payment();
+
+        pay.setCallId(Integer.parseInt(String.valueOf(getCallId())));
+        pay.setPayDate("2021-10-01");
+        pay.setCreditCardNumber(getCreditCardNumber());
+        pay.setPhoneNumber(getPhoneNumber());
+        pay.setPayAmt(getPayAmt());
+        pay.setPayStatus("결제요청");
+        //Req/Res 동기호출
+        TaxiApplication.applicationContext.getBean(call.taxi.service.external.PaymentService.class).pay(pay);
+
+
         TaxiCallReceived taxiCallReceived = new TaxiCallReceived();
         BeanUtils.copyProperties(this, taxiCallReceived);
         taxiCallReceived.publishAfterCommit();
