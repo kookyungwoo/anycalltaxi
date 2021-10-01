@@ -26,8 +26,32 @@ public class Payment {
         this.creditCardNumber = creditCardNumber;
     }
 
+    @PrePersist
+    public void onPrePersist(){  //결제이력을 저장한 후 적당한 시간 끌기
+
+        try {
+            System.out.println("++++++++++++++++onPrePersist++++++++++++++++++++");
+            System.out.println("++++++++++++++++onPrePersist++++++++++++++++++++");
+            System.out.println("++++++++++++++++onPrePersist++++++++++++++++++++");
+            Thread.currentThread().sleep((long) (400 + Math.random() * 220));
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+
     @PostPersist
     public void onPostPersist(){
+
+        try {
+            System.out.println("++++++++++++++++onPostPersist++++++++++++++++++++");
+            System.out.println("++++++++++++++++onPostPersist++++++++++++++++++++");
+            System.out.println("++++++++++++++++onPostPersist++++++++++++++++++++");
+            Thread.currentThread().sleep((long) (400 + Math.random() * 220));
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+
         PaymentApproved paymentApproved = new PaymentApproved();
         BeanUtils.copyProperties(this, paymentApproved);
         paymentApproved.publishAfterCommit();
